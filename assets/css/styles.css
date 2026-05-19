@@ -1,0 +1,266 @@
+:root {
+  --blue: #1e88e5;
+  --dark-blue: #0d47a1;
+  --light-gray: #f5f5f5;
+  --white: #ffffff;
+  --text: #1a1a1a;
+  --radius: 14px;
+  --shadow: 0 8px 20px rgba(13, 71, 161, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: var(--light-gray);
+  line-height: 1.6;
+}
+
+.container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+}
+
+.section {
+  padding: 3.5rem 0;
+}
+
+.alt {
+  background: var(--white);
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 70px;
+  gap: 1rem;
+}
+
+.brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark-blue);
+  text-decoration: none;
+}
+
+.menu-toggle {
+  border: none;
+  background: var(--white);
+  color: var(--dark-blue);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  flex-direction: column;
+  background: var(--white);
+}
+
+.nav-links.open {
+  display: flex;
+}
+
+.nav-links a {
+  display: block;
+  padding: 0.8rem 0;
+  color: var(--dark-blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-links a[aria-current="page"] {
+  color: var(--blue);
+}
+
+.hero {
+  color: var(--white);
+  text-align: center;
+  background: linear-gradient(120deg, var(--blue), var(--dark-blue));
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  margin-bottom: 0.75rem;
+}
+
+.hero p,
+.page-intro p {
+  margin: 0 auto 1.5rem;
+  max-width: 700px;
+}
+
+.button {
+  display: inline-block;
+  border: none;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--dark-blue);
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cta .button,
+form .button {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.cards-grid {
+  grid-template-columns: 1fr;
+}
+
+.card {
+  background: var(--white);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card h2,
+.card h3 {
+  margin-top: 0;
+  color: var(--dark-blue);
+}
+
+.card a {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 1.35rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.center {
+  text-align: center;
+}
+
+.cta {
+  text-align: center;
+}
+
+.about-grid,
+.contact-grid {
+  grid-template-columns: 1fr;
+}
+
+.map-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  border: 2px dashed var(--blue);
+  border-radius: var(--radius);
+  color: var(--dark-blue);
+  background: rgba(30, 136, 229, 0.08);
+  text-align: center;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #c7d8f5;
+  border-radius: 10px;
+  padding: 0.7rem;
+  font: inherit;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid rgba(30, 136, 229, 0.45);
+  border-color: var(--blue);
+}
+
+.form-status {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.form-status.error {
+  color: #b00020;
+}
+
+.form-status.success {
+  color: #1b5e20;
+}
+
+.site-footer {
+  background: var(--dark-blue);
+  color: var(--white);
+  padding: 1rem 0;
+  text-align: center;
+}
+
+@media (min-width: 700px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    width: auto;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .nav-links a {
+    padding: 0;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .why-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .about-grid,
+  .contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 980px) {
+  .services-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
