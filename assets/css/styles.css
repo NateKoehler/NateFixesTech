@@ -214,6 +214,12 @@ textarea:focus {
   font-size: 0.95rem;
 }
 
+.privacy-note {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #4a5a77;
+}
+
 .form-status.error {
   color: #b00020;
 }

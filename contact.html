@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Contact NateFixesTech for local tech support in Central Coast, CA." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="NateFixesTech" />
+  <meta property="og:title" content="Contact | NateFixesTech" />
+  <meta property="og:description" content="Reach out to NateFixesTech for local support in Central Coast, CA." />
+  <meta property="og:url" content="https://natefixestech.com/contact.html" />
+  <meta property="og:image" content="https://natefixestech.com/assets/img/placeholder-service.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contact | NateFixesTech" />
+  <meta name="twitter:description" content="Reach out to NateFixesTech for local support in Central Coast, CA." />
+  <meta name="twitter:image" content="https://natefixestech.com/assets/img/placeholder-service.svg" />
+  <link rel="canonical" href="https://natefixestech.com/contact.html" />
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
   <title>Contact | NateFixesTech</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
@@ -33,7 +45,7 @@
       <div class="container grid contact-grid">
         <article class="card">
           <h2>Send a Message</h2>
-          <form id="contact-form" novalidate>
+          <form id="contact-form" action="https://formspree.io/f/your-form-id" method="POST" novalidate>
             <label for="name">Name</label>
             <input id="name" name="name" type="text" required />
 
@@ -43,7 +55,10 @@
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="5" required></textarea>
 
+            <input type="hidden" name="_subject" value="New NateFixesTech website inquiry" />
+
             <p id="form-status" class="form-status" aria-live="polite"></p>
+            <p class="privacy-note">Submitting this form shares your details so NateFixesTech can respond to your request.</p>
             <button class="button" type="submit">Send Message</button>
           </form>
         </article>
