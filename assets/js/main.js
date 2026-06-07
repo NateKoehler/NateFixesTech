@@ -25,3 +25,36 @@ const yearElement = document.querySelector('#year');
 if (yearElement) {
   yearElement.textContent = String(new Date().getFullYear());
 }
+
+const contactForm = document.querySelector('#contact-form');
+if (contactForm instanceof HTMLFormElement) {
+  const nameField = contactForm.querySelector('input[name="name"]');
+  const emailField = contactForm.querySelector('input[name="email"]');
+  const subjectField = contactForm.querySelector('input[name="_subject"]');
+  const replyToField = contactForm.querySelector('input[name="_replyto"]');
+  const customerReferenceField = contactForm.querySelector('input[name="customer_reference"]');
+
+  contactForm.addEventListener(
+    'submit',
+    () => {
+      const nameValue =
+        nameField instanceof HTMLInputElement ? nameField.value.trim().replace(/\s+/g, ' ') : '';
+      const emailValue = emailField instanceof HTMLInputElement ? emailField.value.trim() : '';
+      const customerLabel = nameValue || emailValue || 'Unknown customer';
+
+      if (subjectField instanceof HTMLInputElement) {
+        subjectField.value = `NateFixesTech inquiry from ${customerLabel}`;
+      }
+
+      if (replyToField instanceof HTMLInputElement) {
+        replyToField.value = emailValue;
+      }
+
+      if (customerReferenceField instanceof HTMLInputElement) {
+        customerReferenceField.value =
+          nameValue && emailValue ? `${nameValue} <${emailValue}>` : customerLabel;
+      }
+    },
+    true
+  );
+}
