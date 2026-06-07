@@ -42,6 +42,14 @@ if (contactForm instanceof HTMLFormElement) {
       const emailValue = emailField instanceof HTMLInputElement ? emailField.value.trim() : '';
       const customerLabel = nameValue || emailValue || 'Unknown customer';
 
+      if (subjectField instanceof HTMLInputElement) {
+        subjectField.value = `NateFixesTech inquiry from ${customerLabel}`;
+      }
+
+      if (replyToField instanceof HTMLInputElement) {
+        replyToField.value = emailValue;
+      }
+
       if (customerReferenceField instanceof HTMLInputElement) {
         customerReferenceField.value =
           nameValue && emailValue ? `${nameValue} <${emailValue}>` : customerLabel;
