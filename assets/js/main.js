@@ -26,29 +26,37 @@ const formStatus = document.querySelector('#form-status');
 
 if (form && formStatus) {
   form.addEventListener('submit', (event) => {
-    event.preventDefault();
     formStatus.className = 'form-status';
 
     const name = form.querySelector('#name')?.value.trim() ?? '';
     const email = form.querySelector('#email')?.value.trim() ?? '';
     const message = form.querySelector('#message')?.value.trim() ?? '';
+    const action = form.getAttribute('action') ?? '';
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!name || !email || !message) {
+      event.preventDefault();
       formStatus.textContent = 'Please complete all fields before sending.';
       formStatus.classList.add('error');
       return;
     }
 
     if (!emailPattern.test(email)) {
+      event.preventDefault();
       formStatus.textContent = 'Please enter a valid email address.';
       formStatus.classList.add('error');
       return;
     }
 
-    formStatus.textContent = 'Thanks! Your message is ready to send.';
+    if (action.includes('/your-form-id')) {
+      event.preventDefault();
+      formStatus.textContent = 'Form is not connected yet. Replace the form action URL in contact.html with your real Formspree endpoint.';
+      formStatus.classList.add('error');
+      return;
+    }
+
+    formStatus.textContent = 'Sending your message...';
     formStatus.classList.add('success');
-    form.reset();
   });
 }
 

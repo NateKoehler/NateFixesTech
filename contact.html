@@ -33,7 +33,13 @@
       <div class="container grid contact-grid">
         <article class="card">
           <h2>Send a Message</h2>
-          <form id="contact-form" novalidate>
+          <form
+            id="contact-form"
+            action="https://formspree.io/f/mojzerqy"
+            method="POST"
+            novalidate
+          >
+            <input type="hidden" name="_subject" value="New NateFixesTech contact form message" />
             <label for="name">Name</label>
             <input id="name" name="name" type="text" required />
 
