@@ -6,6 +6,7 @@
   <meta name="description" content="Contact NateFixesTech for local tech support in San Benito County." />
   <title>Contact | NateFixesTech</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
   <header class="site-header">
@@ -58,9 +59,23 @@
         <article class="card">
           <h2>Service Area</h2>
           <p>Proudly serving San Benito County.</p>
-          <div class="map-placeholder" role="img" aria-label="Google Maps embed placeholder for service area">
-            Google Maps Embed Placeholder
-          </div>
+          <div id="service-map" style="height:300px;width:100%;border-radius:8px;"></div>
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+          <script>
+            (function () {
+              var map = L.map('service-map').setView([36.84164633039716, -121.44415207929914], 11);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              }).addTo(map);
+              L.circle([36.84164633039716, -121.44415207929914], {
+                radius: 11265,
+                color: '#2563eb',
+                fillColor: '#2563eb',
+                fillOpacity: 0.12,
+                weight: 2
+              }).addTo(map);
+            })();
+          </script>
           <p class="cta-copy">Need help today? Reach out now and let’s solve it together.</p>
         </article>
       </div>
