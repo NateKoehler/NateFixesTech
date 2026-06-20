@@ -133,6 +133,15 @@ body {
   max-width: 700px;
 }
 
+.kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
 .button {
   display: inline-block;
   border: none;
@@ -190,6 +199,19 @@ form .button {
 
 .cta {
   text-align: center;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.confirmation-card {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .about-grid,
