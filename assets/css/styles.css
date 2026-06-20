@@ -252,6 +252,8 @@ textarea:focus {
     width: auto;
     flex-direction: row;
     gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .nav-links a {
