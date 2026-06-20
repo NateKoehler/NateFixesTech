@@ -106,6 +106,17 @@ body {
   background: linear-gradient(120deg, var(--blue), var(--dark-blue));
 }
 
+.hero.page-intro {
+  background: linear-gradient(120deg, var(--blue), var(--dark-blue)) !important;
+  color: var(--white) !important;
+  padding: 4.5rem 0;
+}
+
+.hero.page-intro h1,
+.hero.page-intro p {
+  color: var(--white) !important;
+}
+
 .page-intro h1 {
   color: var(--white);
   margin-bottom: 0.75rem;
