@@ -33,10 +33,30 @@ if (contactForm instanceof HTMLFormElement) {
   const subjectField = contactForm.querySelector('input[name="_subject"]');
   const replyToField = contactForm.querySelector('input[name="_replyto"]');
   const customerReferenceField = contactForm.querySelector('input[name="customer_reference"]');
+  const formStatus = contactForm.parentElement?.querySelector('[data-form-status]');
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+
+  const setFormStatus = (message, type = '') => {
+    if (!(formStatus instanceof HTMLElement)) {
+      return;
+    }
+
+    formStatus.textContent = message;
+    formStatus.classList.remove('error', 'success');
+    if (type) {
+      formStatus.classList.add(type);
+    }
+  };
 
   contactForm.addEventListener(
     'submit',
-    () => {
+    async (event) => {
+      event.preventDefault();
+
+      if (!contactForm.reportValidity()) {
+        return;
+      }
+
       const nameValue =
         nameField instanceof HTMLInputElement ? nameField.value.trim().replace(/\s+/g, ' ') : '';
       const emailValue = emailField instanceof HTMLInputElement ? emailField.value.trim() : '';
@@ -54,7 +74,52 @@ if (contactForm instanceof HTMLFormElement) {
         customerReferenceField.value =
           nameValue && emailValue ? `${nameValue} <${emailValue}>` : customerLabel;
       }
+
+      const originalButtonText =
+        submitButton instanceof HTMLButtonElement ? submitButton.textContent : null;
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+      }
+
+      setFormStatus('Submitting your request...', 'success');
+
+      try {
+        const response = await fetch('https://formspree.io/f/mojzerqy', {
+          method: 'POST',
+          body: new FormData(contactForm),
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          let errorMessage = 'Unable to submit right now. Please try again in a moment.';
+          try {
+            const result = await response.json();
+            if (result && Array.isArray(result.errors) && result.errors[0]?.message) {
+              errorMessage = result.errors[0].message;
+            }
+          } catch {
+            // Keep the generic fallback message when parsing fails.
+          }
+
+          throw new Error(errorMessage);
+        }
+
+        window.location.href = 'inquiry-confirmation.html';
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Something went wrong.';
+        setFormStatus(message, 'error');
+      } finally {
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = false;
+          if (originalButtonText) {
+            submitButton.textContent = originalButtonText;
+          }
+        }
+      }
     },
-    true
+    false
   );
 }
