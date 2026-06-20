@@ -1,6 +1,25 @@
 const menuButton = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('#nav-links');
 
+if (navLinks) {
+  const navItems = [
+    { href: 'index.html', label: 'Home' },
+    { href: 'services.html', label: 'Services' },
+    { href: 'scam-protection.html', label: 'Scam Protection' },
+    { href: 'about.html', label: 'About' },
+    { href: 'contact.html', label: 'Contact' },
+  ];
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+
+  navLinks.innerHTML = navItems
+    .map((item) => {
+      const isCurrent = item.href === currentPath;
+      const currentAttr = isCurrent ? ' aria-current="page"' : '';
+      return `<li><a href="${item.href}"${currentAttr}>${item.label}</a></li>`;
+    })
+    .join('');
+}
+
 if (menuButton && navLinks) {
   menuButton.addEventListener('click', () => {
     const isOpen = navLinks.classList.toggle('open');
