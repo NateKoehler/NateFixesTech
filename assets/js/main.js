@@ -28,6 +28,78 @@ if (yearElement) {
 
 const contactForm = document.querySelector('#contact-form');
 if (contactForm instanceof HTMLFormElement) {
+  const formStatus = contactForm.parentElement?.querySelector('[data-form-status]');
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+
+  const setFormStatus = (message, type = '') => {
+    if (!(formStatus instanceof HTMLElement)) {
+      return;
+    }
+
+    formStatus.textContent = message;
+    formStatus.classList.remove('error', 'success');
+    if (type) {
+      formStatus.classList.add(type);
+    }
+  };
+
+  contactForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!contactForm.checkValidity()) {
+      contactForm.reportValidity();
+      return;
+    }
+
+    const originalLabel =
+      submitButton instanceof HTMLButtonElement ? submitButton.textContent : null;
+
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending...';
+    }
+
+    setFormStatus('Submitting your request...', 'success');
+
+    try {
+      const response = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Unable to submit right now. Please try again in a moment.';
+        try {
+          const result = await response.json();
+          if (result && Array.isArray(result.errors) && result.errors[0]?.message) {
+            errorMessage = result.errors[0].message;
+          }
+        } catch {
+          // Keep fallback message when parsing fails.
+        }
+        throw new Error(errorMessage);
+      }
+
+      window.location.href = 'inquiry-confirmation.html';
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Something went wrong.';
+      setFormStatus(message, 'error');
+    } finally {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+        if (originalLabel) {
+          submitButton.textContent = originalLabel;
+        }
+      }
+    }
+  });
+}
+
+const contactForm = document.querySelector('#contact-form');
+if (contactForm instanceof HTMLFormElement) {
   const nameField = contactForm.querySelector('input[name="name"]');
   const emailField = contactForm.querySelector('input[name="email"]');
   const subjectField = contactForm.querySelector('input[name="_subject"]');
