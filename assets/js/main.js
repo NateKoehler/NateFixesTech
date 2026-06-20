@@ -26,6 +26,15 @@ if (yearElement) {
   yearElement.textContent = String(new Date().getFullYear());
 }
 
+const senderNameTarget = document.querySelector('[data-sender-name]');
+if (senderNameTarget instanceof HTMLElement) {
+  const params = new URLSearchParams(window.location.search);
+  const senderName = params.get('name');
+  if (senderName && senderName.trim()) {
+    senderNameTarget.textContent = senderName.trim();
+  }
+}
+
 const contactForm = document.querySelector('#contact-form');
 if (contactForm instanceof HTMLFormElement) {
   const nameField = contactForm.querySelector('input[name="name"]');
@@ -111,11 +120,12 @@ if (contactForm instanceof HTMLFormElement) {
         throw new Error(errorMessage);
       }
 
-      window.location.href = 'inquiry-confirmation.html';
+      const firstName = nameValue ? nameValue.split(' ')[0] : '';
+      const nameParam = encodeURIComponent(firstName || 'there');
+      window.location.href = `inquiry-confirmation.html?name=${nameParam}`;
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
-        // Fallback to native submit if fetch hangs, so inquiries are still sent.
-        HTMLFormElement.prototype.submit.call(contactForm);
+        setFormStatus('Request timed out. Please check your connection and try again.', 'error');
         return;
       }
 
