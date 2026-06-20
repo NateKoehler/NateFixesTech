@@ -6,6 +6,7 @@
   <meta name="description" content="Learn about Nate and NateFixesTech local IT services." />
   <title>About | NateFixesTech</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
   <header class="site-header">
@@ -40,9 +41,49 @@
         <article class="card">
           <h2>Service Area</h2>
           <p>San Benito County</p>
-          <div class="map-placeholder" role="img" aria-label="Map placeholder for San Benito County service area">
-            Map Placeholder
-          </div>
+          <div id="about-service-map" style="height:300px;width:100%;border-radius:8px;"></div>
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+          <script>
+            (function () {
+              var map = L.map('about-service-map').setView([36.845, -121.406], 10);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              }).addTo(map);
+              var serviceArea = {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [[
+                    [-121.5958765, 36.8439994],
+                    [-121.5599715, 36.8902239],
+                    [-121.4627917, 36.8583293],
+                    [-121.424606,  36.9102521],
+                    [-121.4487479, 36.951429],
+                    [-121.4295012, 36.9784385],
+                    [-121.3942072, 36.9728723],
+                    [-121.3215809, 36.9422589],
+                    [-121.2751959, 36.8409934],
+                    [-121.2964119, 36.7818675],
+                    [-121.2169309, 36.7128737],
+                    [-121.284266,  36.7023334],
+                    [-121.3223655, 36.7683614],
+                    [-121.3578456, 36.7819035],
+                    [-121.4040355, 36.7882041],
+                    [-121.4491038, 36.7991924],
+                    [-121.5958765, 36.8439994]
+                  ]]
+                }
+              };
+              L.geoJSON(serviceArea, {
+                style: {
+                  color: '#2563eb',
+                  fillColor: '#2563eb',
+                  fillOpacity: 0.12,
+                  weight: 2
+                }
+              }).addTo(map);
+            })();
+          </script>
         </article>
       </div>
     </section>
