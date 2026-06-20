@@ -36,10 +36,17 @@
         <article class="card">
           <h2>Send a Message</h2>
           <p class="form-status" data-form-status aria-live="polite"></p>
-          <form id="contact-form" novalidate>
+          <form
+            id="contact-form"
+            action="https://formspree.io/f/mojzerqy"
+            method="POST"
+            novalidate
+          >
             <input type="hidden" name="_subject" value="New NateFixesTech contact form message" />
             <input type="hidden" name="_replyto" value="" />
             <input type="hidden" name="customer_reference" value="" />
+            <input type="hidden" name="_next" value="https://natefixestech.com/inquiry-confirmation.html" />
+            <input type="hidden" name="_captcha" value="false" />
             <label for="name">Name</label>
             <input id="name" name="name" type="text" required />
 
