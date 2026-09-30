@@ -323,3 +323,8 @@ textarea:focus {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+.site-footer a {
+  color: var(--white);
+  text-decoration: underline;
+}
