@@ -57,6 +57,20 @@ if (contactForm instanceof HTMLFormElement) {
     }
   };
 
+  // "Get notified when it's ready" on an app page links here with ?topic=...; fill in the message
+  // and tag the email subject so these requests are easy to spot in the inbox.
+  const topics = {
+    'helper-app': {
+      subject: 'NateFixesTech Helper waitlist',
+      message: "Please let me know when the NateFixesTech Helper app is available.",
+    },
+  };
+  const topic = topics[new URLSearchParams(window.location.search).get('topic') || ''];
+  const messageField = contactForm.querySelector('textarea[name="message"]');
+  if (topic && messageField instanceof HTMLTextAreaElement && !messageField.value.trim()) {
+    messageField.value = topic.message;
+  }
+
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -71,7 +85,9 @@ if (contactForm instanceof HTMLFormElement) {
     const customerLabel = nameValue || emailValue || 'Unknown customer';
 
     if (subjectField instanceof HTMLInputElement) {
-      subjectField.value = `NateFixesTech inquiry from ${customerLabel}`;
+      subjectField.value = topic
+        ? `${topic.subject}: ${customerLabel}`
+        : `NateFixesTech inquiry from ${customerLabel}`;
     }
 
     if (replyToField instanceof HTMLInputElement) {

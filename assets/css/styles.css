@@ -349,3 +349,8 @@ textarea:focus {
   margin: 0 0 0.75rem;
   font-size: 0.85rem;
 }
+
+/* Links that jump to a spot on a page (#contact-form, #apps) land below the sticky menu bar, not under it */
+[id] {
+  scroll-margin-top: 90px;
+}

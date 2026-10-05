@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Learn about Nate and NateFixesTech local IT services." />
   <title>About | NateFixesTech</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20261005" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
@@ -45,6 +45,16 @@
           <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
           <script>
             (function () {
+              // If the map library couldn't load (blocked or offline), show a plain message instead of an empty box.
+              if (!window.L) {
+                var box = document.getElementById('about-service-map');
+                if (box) {
+                  box.className = 'map-placeholder';
+                  box.style.height = 'auto';
+                  box.textContent = 'Serving Hollister, San Juan Bautista, Tres Pinos and all of San Benito County.';
+                }
+                return;
+              }
               var map = L.map('about-service-map').setView([36.845, -121.406], 10);
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -95,6 +105,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/main.js?v=20260620"></script>
+  <script src="assets/js/main.js?v=20261005"></script>
 </body>
 </html>
