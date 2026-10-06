@@ -61,8 +61,8 @@ if (contactForm instanceof HTMLFormElement) {
   // and tag the email subject so these requests are easy to spot in the inbox.
   const topics = {
     'helper-app': {
-      subject: 'NateFixesTech Helper waitlist',
-      message: "Please let me know when the NateFixesTech Helper app is available.",
+      subject: 'PC Health & Fix waitlist',
+      message: "Please let me know when the PC Health & Fix app is available.",
     },
   };
   const topic = topics[new URLSearchParams(window.location.search).get('topic') || ''];
