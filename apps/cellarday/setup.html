@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Cellarday – Sheet Setup</title>
+<style>
+  :root { color-scheme: light; --ground:#ecebe7; --paper:#f8f7f4; --ink:#1d1b19; --muted:#6f6a64; --rule:#e1ddd6;
+    --wine:#7a2333; --wine-ink:#ffffff; --warn:#8a4b00; --warn-bg:#fff3dc; --good:#2f6b3a; --good-bg:#e7f2e8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink);
+    font:16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding-block: 32px 48px; padding-inline: 16px; }
+  main { max-width: 640px; margin: 0 auto; background: var(--paper); border-radius: 16px; padding: 28px 24px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06); display: flex; flex-direction: column; gap: 14px; }
+  .brand { color: var(--wine); font-weight: 700; letter-spacing: .04em; font-size: 14px; text-transform: uppercase; }
+  h1 { font-size: 28px; line-height: 1.15; margin: 0; letter-spacing: -.01em; }
+  p { margin: 0; }
+  .muted { color: var(--muted); font-size: 15px; }
+  label { font-weight: 600; font-size: 15px; }
+  input { font: inherit; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; width: 100%; }
+  button, .open { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 13px 20px; background: var(--wine); color: var(--wine-ink);
+    cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
+  button:disabled { opacity: .5; cursor: default; }
+  :focus-visible { outline: 2px solid var(--wine); outline-offset: 2px; }
+  .status { border-radius: 12px; padding: 14px 16px; }
+  .status.ok { background: var(--good-bg); color: var(--good); }
+  .status.err { background: var(--warn-bg); color: var(--warn); }
+  ol { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  footer { max-width: 640px; margin: 16px auto 0; color: var(--muted); font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">Cellarday</div>
+  <h1>Set up your club sheet</h1>
+  <p class="muted">Sign in with the Google account that keeps your club members. This creates one Google Sheet and one folder for pickup signatures in that account’s Drive. Cellarday can only see the files it creates, never the rest of your Drive.</p>
+
+  <div>
+    <label for="venue">Venue name</label>
+    <input id="venue" value="Crave" autocomplete="organization">
+  </div>
+  <button id="go" type="button" disabled>Sign in with Google and create the sheet</button>
+  <div id="status" class="status" hidden></div>
+
+  <div id="next" hidden>
+    <p><strong>Next steps</strong></p>
+    <ol>
+      <li>Open the sheet and go to the <strong>Members</strong> tab.</li>
+      <li>Paste your member list under the headers, keeping the same column order. Leave <strong>Member ID</strong> blank; the iPad fills it in.</li>
+      <li>Pick each member’s <strong>Preference</strong> (Mixed, Red only, White only).</li>
+      <li>Enter releases in the <strong>Releases</strong> tab, one row per wine, and set <strong>Ready</strong> to Y when members have been charged.</li>
+    </ol>
+  </div>
+</main>
+<footer>Cellarday by <a href="https://natefixestech.com">NateFixesTech</a> · Questions: support@natefixestech.com</footer>
+
+<script src="https://accounts.google.com/gsi/client" async onload="ready()"></script>
+<script>
+// Registered as the "Cellarday setup page" web client in the Google Cloud project "cellarday".
+// It uses the same narrow drive.file access as the iPad app.
+const CLIENT_ID = '1073480081481-mqqq32d6junfit9kdsklt24m6e66c4kr.apps.googleusercontent.com';
+const SCOPE = 'https://www.googleapis.com/auth/drive.file';
+
+// Must match the app's src/google/workbook.ts.
+const TABS = [
+  ['Members', ['Membership Date', 'First Name', 'Last Name', 'Club', 'Customer ID', 'Membership ID', 'Member Status',
+    'Member Address', 'City', 'State', 'Zip', 'Phone', 'Member Email', 'Alternate Email', 'Membership Source',
+    'First Shipment', 'Notes', 'Cancelation Date', 'Member ID', 'Preference']],
+  ['Releases', ['Club', 'Month', 'Ready', 'Wine', 'Producer', 'Vintage', 'Type', 'Red-only swap', 'White-only swap', 'Bonus']],
+  ['Paid', ['Club', 'Month', 'Member ID', 'Member', 'Paid']],
+  ['Pickups', ['Pickup ID', 'Picked up at', 'Member ID', 'Member', 'Releases', 'Picked up by', 'Signature file', 'On paper', 'Note', 'Undone at']],
+  ['Staff notes', ['Note ID', 'Created', 'Member ID', 'Member', 'Note', 'Done']],
+];
+
+const $ = (id) => document.getElementById(id);
+let token = null;
+let tokenClient = null;
+
+function show(kind, html) {
+  const s = $('status');
+  s.className = 'status ' + kind;
+  s.innerHTML = html;
+  s.hidden = false;
+}
+
+function ready() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPE,
+    callback: (res) => {
+      if (res.error) { show('err', 'Google sign-in didn’t finish: ' + res.error); $('go').disabled = false; return; }
+      token = res.access_token;
+      setup().catch((e) => { show('err', e.message); $('go').disabled = false; });
+    },
+  });
+  $('go').disabled = false;
+}
+
+async function api(url, options = {}) {
+  const res = await fetch(url, { ...options, headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', ...(options.headers || {}) } });
+  if (!res.ok) throw new Error('Google returned ' + res.status + ': ' + (await res.text()).slice(0, 200));
+  return res.json();
+}
+
+async function appFiles(mime) {
+  const q = encodeURIComponent("mimeType='" + mime + "' and trashed=false");
+  const r = await api('https://www.googleapis.com/drive/v3/files?q=' + q + '&orderBy=createdTime desc&fields=files(id,name)');
+  return r.files || [];
+}
+
+const dropdown = (sheetId, col, values) => ({
+  setDataValidation: {
+    range: { sheetId, startRowIndex: 1, endRowIndex: 2000, startColumnIndex: col, endColumnIndex: col + 1 },
+    rule: { condition: { type: 'ONE_OF_LIST', values: values.map((v) => ({ userEnteredValue: v })) }, strict: false, showCustomUi: true },
+  },
+});
+
+async function setup() {
+  show('ok', 'Checking for an existing Cellarday sheet…');
+  const [sheets, folders] = await Promise.all([
+    appFiles('application/vnd.google-apps.spreadsheet'),
+    appFiles('application/vnd.google-apps.folder'),
+  ]);
+  if (sheets.length) {
+    done(sheets[0].id, sheets[0].name, false);
+    return;
+  }
+
+  show('ok', 'Creating the sheet…');
+  const venue = $('venue').value.trim() || 'My venue';
+  const created = await api('https://sheets.googleapis.com/v4/spreadsheets', {
+    method: 'POST',
+    body: JSON.stringify({
+      properties: { title: 'Cellarday – ' + venue },
+      sheets: TABS.map(([title, headers], index) => ({
+        properties: { title, index, gridProperties: { frozenRowCount: 1 } },
+        data: [{ startRow: 0, startColumn: 0, rowData: [{ values: headers.map((h) => ({ userEnteredValue: { stringValue: h }, userEnteredFormat: { textFormat: { bold: true } } })) }] }],
+      })),
+    }),
+  });
+  const id = (title) => created.sheets.find((s) => s.properties.title === title).properties.sheetId;
+  await api('https://sheets.googleapis.com/v4/spreadsheets/' + created.spreadsheetId + ':batchUpdate', {
+    method: 'POST',
+    body: JSON.stringify({ requests: [
+      dropdown(id('Members'), 19, ['Mixed', 'Red only', 'White only']),
+      dropdown(id('Releases'), 2, ['Y', 'N']),
+      dropdown(id('Releases'), 6, ['Red', 'White', 'Rosé', 'Sparkling', 'Dessert', 'Other']),
+      dropdown(id('Releases'), 9, ['Y', 'N']),
+      dropdown(id('Paid'), 4, ['Y', 'N']),
+    ] }),
+  });
+
+  if (!folders.some((f) => f.name.startsWith('Cellarday signatures'))) {
+    await api('https://www.googleapis.com/drive/v3/files?fields=id', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Cellarday signatures – ' + venue, mimeType: 'application/vnd.google-apps.folder' }),
+    });
+  }
+  done(created.spreadsheetId, 'Cellarday – ' + venue, true);
+}
+
+function done(id, name, isNew) {
+  const url = 'https://docs.google.com/spreadsheets/d/' + id + '/edit';
+  const safe = name.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  show('ok', (isNew ? 'Created <strong>' + safe + '</strong> and a signatures folder in your Drive.' : 'You already have <strong>' + safe + '</strong>. Nothing new was created.') +
+    '<p style="margin-top:10px"><a class="open" href="' + url + '" target="_blank" rel="noopener">Open the sheet</a></p>');
+  $('next').hidden = false;
+  $('go').hidden = true;
+}
+
+$('go').addEventListener('click', () => {
+  $('go').disabled = true;
+  tokenClient.requestAccessToken();
+});
+</script>
+</body>
+</html>
